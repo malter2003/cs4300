@@ -1,5 +1,4 @@
-
-
+# list of tuples of my favorite books, with first element representing title and second representing author
 def books(): 
     return [
         ("Hunter X Hunter", "Yoshihiro Togashi"), 
@@ -9,6 +8,7 @@ def books():
         ("A Silent Voice", "Yoshitoki Ōima")
     ]
 
+# dictionaries of students, with student to student ID relationship
 def students():
     return {
         "John Smith": 394,

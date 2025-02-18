@@ -1,5 +1,6 @@
 from task4 import *
 
+# test with various types of numbers
 def test_discount_int_int():
     assert calculate_discount(50, 50) == 25
 

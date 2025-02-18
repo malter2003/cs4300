@@ -1,5 +1,6 @@
 from task2 import *
 
+# test if each method actually returns an instance of said datatype
 def test_int():
     assert isinstance(someint(), int), "Expected an integer"
 

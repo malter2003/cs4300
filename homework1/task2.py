@@ -1,3 +1,5 @@
+# various methods that simply return some data type
+
 def someint():
     return 5
 def somefloat():

@@ -13,4 +13,4 @@ def test_for_loop():
     assert for_loop() == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
 def test_while_loop():
-    assert while_loop() == 5050
+    assert while_loop() == 5050 # sum of natural numbers from 1 to 100 inclusive
