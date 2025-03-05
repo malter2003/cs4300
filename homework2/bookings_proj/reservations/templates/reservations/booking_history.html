@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings</title>
+    <title>Booking History</title>
 </head>
 <body>
     <h1>Booking History</h1>
     <ul>
         {% for booking in bookings %}
             <li>
-                Movie: {{ booking.movie.title }} | Seat: {{ booking.seat.number }} | Date: {{ booking.created_at }}
+                Movie: {{ booking.movie.title }} | Seat: {{ booking.seat.seat_number }} | Duration: {{ booking.movie.duration }} | Date: {{ booking.booking_date }}
             </li>
         {% empty %}
-            <p>No bookings yet.</p>
+            <p>No bookings</p>
         {% endfor %}
     </ul>
+    <form action="{% url 'movie_list' %}" method="get">
+        <button type="submit">Back to Movies</button>
+    </form>
 </body>
 </html>

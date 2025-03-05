@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Movie, Seat, Booking
 from .serializers import MovieSerializer, SeatSerializer, BookingSerializer
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
@@ -19,11 +21,12 @@ class SeatViewSet(viewsets.ModelViewSet):
         return Response({"available": not seat.is_booked()})
 
     @action(detail=True, methods=['post'])
-    def book(self, request, pk=None):
+    def book_seat(self, request, pk=None):
         seat = self.get_object()
-        if not seat.is_booked():
-            seat.book()
-            Booking.objects.create(user=request.user, seat=seat, movie=seat.movie)
+        if not seat.is_booked:
+            seat.is_booked = True
+            seat.save()
+            Booking.objects.create(seat=seat, movie=seat.movie)
             return Response({"status": "Booked"})
         return Response({"status": "Already booked"}, status=400)
 
@@ -31,12 +34,9 @@ class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     @action(detail=False, methods=['get'])
     def history(self, request):
-        bookings = Booking.objects.filter(user=request.user)
+        bookings = Booking.objects.all()
         serializer = self.get_serializer(bookings, many=True)
         return Response(serializer.data)
 
@@ -44,12 +44,26 @@ def movie_list(request):
     movies = Movie.objects.all()
     return render(request, 'reservations/movie_list.html', {'movies': movies})
 
-# View to render the booking list page
 def booking_history(request):
-    bookings = Booking.objects.filter(user=request.user)
+    bookings = Booking.objects.all()
     return render(request, 'reservations/booking_history.html', {'bookings': bookings})
 
-# View to render the seat list page
-def seat_booking(request):
-    seats = Seat.objects.all()
-    return render(request, 'reservations/seat_booking.html', {'seats': seats})
+def seat_booking(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    seats = Seat.objects.filter(movie_id=movie_id)
+    return render(request, 'reservations/seat_booking.html', {'movie': movie, 'seats': seats})
+
+@receiver(post_save, sender=Movie)
+def create_seats_for_movie(sender, instance, created, **kwargs):
+    if created:
+        for i in range(1, 21):
+            Seat.objects.create(seat_number=f"{i}", is_booked=False, movie=instance)
+
+def book_seat(request, seat_id):
+    seat = get_object_or_404(Seat, id=seat_id)
+    
+    if not seat.is_booked:
+        seat.is_booked = True
+        seat.save()
+        Booking.objects.create(seat=seat, movie=seat.movie)        
+    return redirect('seat_booking', movie_id=seat.movie.id)

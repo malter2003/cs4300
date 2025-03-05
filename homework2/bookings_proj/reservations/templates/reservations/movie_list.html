@@ -10,11 +10,17 @@
     <ul>
         {% for movie in movies %}
             <li>
-                <strong>{{ movie.title }}</strong> - {{ movie.description }}
-                <br>
+                <strong>{{ movie.title }}</strong>
+                <p>Description: {{ movie.description }}</p>
+                <p>Released: {{ movie.release_date }}</p>
+                <p>Runtime: {{ movie.duration }}m</p>
                 <a href="{% url 'seat_booking' movie.id %}">Book Seats</a>
+                <br>
             </li>
         {% endfor %}
     </ul>
+    <form action="{% url 'booking_history' %}" method="get">
+        <button type="submit">Booking History</button>
+    </form>
 </body>
 </html>

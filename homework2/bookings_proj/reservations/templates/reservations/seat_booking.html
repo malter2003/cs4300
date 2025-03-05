@@ -10,8 +10,8 @@
     <ul>
         {% for seat in seats %}
             <li>
-                Seat {{ seat.number }} - {% if seat.is_booked %} Available {% else %} Booked {% endif %}
-                {% if seat.is_booked %}
+                Seat {{ seat.seat_number }} - {% if seat.is_booked %} Booked {% else %} Available {% endif %}
+                {% if not seat.is_booked %}
                     <form method="post" action="{% url 'book_seat' seat.id %}">
                         {% csrf_token %}
                         <button type="submit">Book</button>
@@ -20,5 +20,9 @@
             </li>
         {% endfor %}
     </ul>
+    <br>
+    <form action="{% url 'movie_list' %}" method="get">
+        <button type="submit">Back to Movies</button>
+    </form>
 </body>
 </html>
