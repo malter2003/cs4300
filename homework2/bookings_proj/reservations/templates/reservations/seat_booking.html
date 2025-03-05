@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Seats</title>
+</head>
+<body>
+    <h1>Book Seats for {{ movie.title }}</h1>
+    <ul>
+        {% for seat in seats %}
+            <li>
+                Seat {{ seat.number }} - {% if seat.is_booked %} Available {% else %} Booked {% endif %}
+                {% if seat.is_booked %}
+                    <form method="post" action="{% url 'book_seat' seat.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Book</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
